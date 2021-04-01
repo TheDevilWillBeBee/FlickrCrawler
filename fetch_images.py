@@ -35,20 +35,23 @@ def download_image_and_save(metadata, image_path, photo_id):
     url = metadata['metadata']['download_url']
     # file_extension = url.split('/')[-1].split('.')[-1]
     file_path = f'{image_path}/{photo_id}.jpg'
-    response = requests.get(url, stream=True)
-    image = Image.open(response.raw)
-    upsample = False
-    original_size = image.size
-    if image.size[0] < width or image.size[1] < height:
-        upsample = True
-    image = center_crop_resize(image)
-    image.save(file_path)
-    result = {
-        "upsample": upsample,
-        "original_size": original_size,
-        "file_path": file_path
-    }
-    return result
+    try:
+        response = requests.get(url, stream=True)
+        image = Image.open(response.raw)
+        upsample = False
+        original_size = image.size
+        if image.size[0] < width or image.size[1] < height:
+            upsample = True
+        image = center_crop_resize(image)
+        image.save(file_path)
+        result = {
+            "upsample": upsample,
+            "original_size": original_size,
+            "file_path": file_path
+        }
+        return result
+    except:
+        return None
 
 
 def fetch_images(args):
