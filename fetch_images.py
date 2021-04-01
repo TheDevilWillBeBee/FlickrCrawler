@@ -1,21 +1,15 @@
-import argparse
-import datetime
-import json
 import os
-from flickrapi import FlickrAPI
-from tqdm import tqdm
-from concurrent.futures import ThreadPoolExecutor
-import multiprocessing
-
-from functools import partial
+import json
+import argparse
 import requests
-
-from PIL import Image
 import numpy as np
+from PIL import Image
+import multiprocessing
+from concurrent.futures import ThreadPoolExecutor
 
 
 def build_parser():
-    parser = argparse.ArgumentParser(description="""Fetch images from Flickr API for a given tag.""")
+    parser = argparse.ArgumentParser(description="""Fetch images from Flickr API for a meta file.""")
     parser.add_argument('tag', type=str)
     parser.add_argument('--out', type=str, default='data/')
     parser.add_argument('--num-workers', type=int, default=8)
@@ -40,7 +34,7 @@ def center_crop_resize(image):
 def download_image_and_save(metadata, image_path, photo_id):
     url = metadata['metadata']['download_url']
     # file_extension = url.split('/')[-1].split('.')[-1]
-    filename = f'{image_path}/{photo_id}.jpg'
+    file_path = f'{image_path}/{photo_id}.jpg'
     response = requests.get(url, stream=True)
     image = Image.open(response.raw)
     upsample = False
@@ -48,10 +42,11 @@ def download_image_and_save(metadata, image_path, photo_id):
     if image.size[0] < width or image.size[1] < height:
         upsample = True
     image = center_crop_resize(image)
-    image.save(filename)
+    image.save(file_path)
     result = {
         "upsample": upsample,
         "original_size": original_size,
+        "file_path": file_path
     }
     return result
 
@@ -75,7 +70,8 @@ def fetch_images(args):
 
     result = worker_pool.starmap(download_image_and_save, worker_args)
     for r, (_, _, photo_id) in enumerate(worker_args):
-        meta[photo_id]['image'] = result[r]
+        if result[r] is not None:
+            meta[photo_id]['image'] = result[r]
 
     with open(os.path.join(args.out, f"{args.tag}/meta.json"), 'w') as f:
         f.write(json.dumps(meta, indent=4, sort_keys=True))

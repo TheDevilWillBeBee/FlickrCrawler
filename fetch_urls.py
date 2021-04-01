@@ -7,7 +7,7 @@ from flickrapi import FlickrAPI
 
 
 def build_parser():
-    parser = argparse.ArgumentParser(description="""Fetch images from Flickr API for a given tag.""")
+    parser = argparse.ArgumentParser(description="""Fetch urls from Flickr API for a given tag.""")
     parser.add_argument('tag', type=str)
     parser.add_argument('--out', type=str, default='data/')
     parser.add_argument('--key', type=str)
