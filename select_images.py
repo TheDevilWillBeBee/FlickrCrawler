@@ -63,7 +63,8 @@ def select_images(args):
         if key_mapping[k] == 'right':
             i += 1
         elif key_mapping[k] == 'left':
-            i -= 1
+            if i > 0:
+                i -= 1
         elif key_mapping[k] == 'add':
             i += 1
             meta_updated[photo_id]['metadata']['is_valid'] = True
