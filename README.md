@@ -35,9 +35,10 @@ process.
 
 Example:
 
-``python3 fetch_urls.py cats --num-workers=4``
+``python3 fetch_images.py cats --num-workers=4``
 
 ---
+
 
 ### User interface for filtering the images
 
@@ -55,8 +56,22 @@ When you're done with filtering the images, you can call extract_selected.py. Th
 new folder and create a new meta file for the selected images.
 
 ---
----
 
+
+## Flickrapi
+
+The flickrapi library is not maintained and causes some errors. 
+Specifically the `.getchildren()`  method creates errors.
+You can simply replace the following line in `flickrapi/core.py`
+
+```python
+photoset = rsp.getchildren()[0]
+```
+with 
+
+```python
+photoset = list(rsp)[0]
+```
 
 
 
