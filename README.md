@@ -21,6 +21,9 @@ Example:
 
 ``python3 fetch_urls.py cats``
 
+Tags: 
+https://www.flickr.com/services/api/flickr.photos.search.html
+
 ---
 
 ### Downloading the images:
